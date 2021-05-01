@@ -1,0 +1,11 @@
+<%- p_output_dir ||= 'pictures/' %>
+
+<%- Dir.foreach(p_output_dir) do |f| %>
+  <%= link_to f, p_output_dir + f %>
+<%- end %>
+
+<%- v_output_dir ||= 'videos/' %>
+
+<%- Dir.foreach(v_output_dir) do |f| %>
+  <%= link_to f, v_output_dir + f %>
+<%- end %>
