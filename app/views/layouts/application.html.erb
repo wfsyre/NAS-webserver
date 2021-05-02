@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>NASWebserver</title>
+    <title>NAS Webserver</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
   <body>
-    <%= yield %>
+    <div>
+      <nav class="top-0 absolute z-50 w-full bg-blue-500 flex-wrap items-center justify-between px-2 py-3">
+        <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
+          <div class="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
+            <p class="text-white text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase" >Data Exchange
+            </p>
+          </div>
+        </div>
+      </nav>
+      <main>
+        <section class="absolute w-full h-full bg-green-300">
+            <%= yield %>
+        </section>
+      </main>
+    </div>
   </body>
 </html>

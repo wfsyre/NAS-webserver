@@ -3,6 +3,6 @@ class User < ApplicationRecord
   @verified = false
 
   def welcome
-    "Hello, #{self.email}"
+    "Hello, #{self.username}"
   end
 end
