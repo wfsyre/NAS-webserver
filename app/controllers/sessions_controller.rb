@@ -12,13 +12,13 @@ class SessionsController < ApplicationController
       redirect_to @user
     else
       message = "Username and password combination not recognized"
-      redirect_to login_path, notice: message
+      redirect_to sessions_path, notice: message
     end
   end
 
   def destroy
     session[:user_id] = nil
     flash[:notice] = "you have been signed out"
-    redirect_to new_session_path
+    redirect_to sessions_path
   end
 end

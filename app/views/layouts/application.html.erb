@@ -13,17 +13,19 @@
 
   <body>
     <div>
-      <nav class="top-0 absolute z-50 w-full bg-blue-500 flex-wrap items-center justify-between px-2 py-3">
-        <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
-          <div class="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
-            <p class="text-white text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase" >Data Exchange
-            </p>
-          </div>
-        </div>
-      </nav>
       <main>
+        <nav class="top-0 absolute z-50 w-full bg-blue-500 flex-wrap items-center justify-between px-2 py-3">
+          <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
+            <div class="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
+              <p class="text-white text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase" >Data Exchange
+              </p>
+            </div>
+          </div>
+        </nav>
         <section class="absolute w-full h-full bg-green-300">
+          <div class="container mx-auto px-4 h-full">
             <%= yield %>
+          </div>
         </section>
       </main>
     </div>
