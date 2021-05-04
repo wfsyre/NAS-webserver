@@ -15,11 +15,12 @@ ActiveRecord::Schema.define(version: 2021_05_01_204952) do
   create_table "users", force: :cascade do |t|
     t.string "username"
     t.string "password_digest"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
     t.integer "photos_uploaded", default: 0
     t.integer "videos_uploaded", default: 0
+    t.integer "permissions", default: 0
     t.text "folders", default: ""
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
 end

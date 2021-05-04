@@ -19,6 +19,9 @@
             <div class="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
               <p class="text-white text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase" >Data Exchange
               </p>
+              <%= if is_admin?
+                    link_to "Admin Page", user_manage_path, class: "bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
+              end%>
             </div>
           </div>
         </nav>

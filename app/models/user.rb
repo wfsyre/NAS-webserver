@@ -4,6 +4,7 @@ class User < ApplicationRecord
   attr_accessor :photos_uploaded
   attr_accessor :videos_uploaded
   attr_accessor :folders
+  attr_accessor :admin
 
   def add_folder(folder_name)
     @folders.add(folder_name)
