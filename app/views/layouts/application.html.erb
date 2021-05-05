@@ -16,12 +16,23 @@
       <main>
         <nav class="top-0 absolute z-50 w-full bg-blue-500 flex-wrap items-center justify-between px-2 py-3">
           <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
-            <div class="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
+            <div class="w-full relative flex justify-between">
               <p class="text-white text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase" >Data Exchange
               </p>
-              <%= if is_admin?
-                    link_to "Admin Page", user_manage_path, class: "bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-              end%>
+              <div>
+                <%= if is_admin?
+                      link_to "Admin Page", user_manage_path, class: "bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
+                    end%>
+                <a class=" uppercase text-white font-bold hover:shadow-lg shadow text-xs px-0 py-0 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150">Folders</a>
+              </div>
+              <div class="">
+                <%= if @user != nil
+                  link_to @user[:username], @user, class: "uppercase text-white font-bold text-xs px-4 py-2 sm:mr-2 mb-1"
+                end%>
+                <%= if @user != nil
+                  link_to "Log out", "/sessions", method: "delete", class: "bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
+                end%>
+              </div>
             </div>
           </div>
         </nav>
