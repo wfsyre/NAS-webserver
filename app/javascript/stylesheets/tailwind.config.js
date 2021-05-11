@@ -17,6 +17,11 @@ module.exports = {
       xl: '1280px',
       '2xl': '1536px',
     },
+    extend: {
+      backgroundImage: (theme) => ({
+        'home': "url('../../assets/images/login.jpg')",
+      })
+    },
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
@@ -99,7 +104,6 @@ module.exports = {
       'gradient-to-bl': 'linear-gradient(to bottom left, var(--tw-gradient-stops))',
       'gradient-to-l': 'linear-gradient(to left, var(--tw-gradient-stops))',
       'gradient-to-tl': 'linear-gradient(to top left, var(--tw-gradient-stops))',
-      'bgi-home': "url('../../assets/images/login.jpg'",
     },
     backgroundOpacity: (theme) => theme('opacity'),
     backgroundPosition: {

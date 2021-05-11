@@ -8,10 +8,41 @@ class UsersController < ApplicationController
 
   def manage
     @user = User.find(session[:user_id])
-    @users = User.where("permissions < ?", @user[:permissions])
+    @users = User.where("permissions <= ?", @user[:permissions])
     @folders = @user[:folders].split(",")
     @num_folders = @folders.length
     @num_managed_users = @users.length
+    root_dir = "media"
+    @media = directory_hash root_dir
+    if params[:path] == nil or params[:path] == ""
+      @current_dir = root_dir
+    else
+      @current_dir = params[:path]
+    end
+    @split_dir = @current_dir.split("/")
+    @current_hash = @media
+    @split_dir[1..].each do |f|
+      @current_hash = @current_hash[:children].find {|p| p[:path] == f}
+    end
+  end
+
+  def change
+    affected_users = params[:users]
+    folders_to_add = params[:folders]
+    affected_users.each do |user|
+      current_user = User.find(user.to_i)
+      folders_to_add.each do |f|
+        if current_user[:folders].split(",").count(f) == 0
+          if current_user[:folders].length == 0
+            current_user[:folders] += f
+          else
+            current_user[:folders] += "," + f
+          end
+          current_user.save
+        end
+      end
+    end
+    redirect_to user_manage_path
   end
 
   def create
@@ -42,6 +73,39 @@ class UsersController < ApplicationController
     @photos_num = @user[:photos_uploaded]
     @vids_num = @user[:videos_uploaded]
     @permissions = @user[:permissions]
+  end
+
+  def manage_user
+    @user = User.find(session[:user_id])
+    @managed_user = User.find(params[:id])
+    @folders = @managed_user[:folders].split(",")
+    @num_folders = @folders.length
+    @photos_num = @managed_user[:photos_uploaded]
+    @vids_num = @managed_user[:videos_uploaded]
+    @permissions = @managed_user[:permissions]
+  end
+
+  def promote
+    promoted_user = User.find(params[:id])
+    if promoted_user[:permissions] < 10
+      promoted_user[:permissions] += 1
+      promoted_user.save
+      redirect_to user_manage_path
+    end
+  end
+
+  def demote
+    promoted_user = User.find(params[:id])
+    if promoted_user[:permissions] > 0
+      promoted_user[:permissions] -= 1
+      promoted_user.save
+      redirect_to user_manage_path
+    end
+  end
+
+  def remove
+    User.delete(params[:id])
+    redirect_to user_manage_path
   end
 
   private

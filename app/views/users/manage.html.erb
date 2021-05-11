@@ -15,30 +15,80 @@
         </div>
       </div>
     </div>
+    <%= form_with method: :post do |form|%>
     <div class="px-3 py-6 bg-gray-200 rounded-lg mt-4">
-      <p>Managed Users</p>
+      <div class="grid grid-cols-2">
+        <p>Managed Users</p>
+        <%=form.submit "Save changes", class: "w-1/5 bg-button_primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"%>
+      </div>
       <table class="table-auto border-collapse">
         <thead>
           <tr>
+            <th class="px-4 py-2">Select</th>
             <th class="px-4 py-2">Username</th>
-            <th class="px-4 py-2">Permissions</th>
+            <th class="px-4 py-2">Permission Level</th>
             <th class="px-4 py-2">Number of Folders</th>
             <th class="px-4 py-2">Uploaded Photos</th>
             <th class="px-4 py-2">Uploaded Videos</th>
+            <th class="px-4 py-2"></th>
           </tr>
         </thead>
         <tbody>
-          <% @users.each do |f| %>
+          <% @users.each do |user| %>
             <tr>
-              <%= content_tag :td, f[:username], class: "border border-black px-4 py-2 font-medium"%>
-              <%= content_tag :td, f[:folders].split(",").length, class: "border border-black px-4 py-2 font-medium"%>
-              <%= content_tag :td, f[:photos_uploaded], class: "border border-black px-4 py-2 font-medium"%>
-              <%= content_tag :td, f[:videos_uploaded], class: "border border-black px-4 py-2 font-medium"%>
-              <%= button_tag 'Promote User', class: ""%>
+              <td class="border border-black px-4 py-2 font-medium">
+                <%= check_box_tag "users[]", user[:id], false, class: "self-center" -%>
+              </td>
+              <td class="border border-black px-4 py-2 font-medium">
+                <%= link_to user[:username], user_manage_path + "/" + user[:id].to_s, method: :get%>
+              </td>
+              <%#= content_tag :td, user[:username], class: "border border-black px-4 py-2 font-medium"%>
+              <td class="border border-black px-4 py-2 font-medium">
+                <div class="flex items-center">
+                  <%= content_tag :a, user[:permissions], class: "flex items-center"%>
+                  <div class="ml-3">
+                    <%= link_to "+", {:controller => :users, :action => "promote", :id => user[:id]}, method: :post, class: "bg-button_primary h-4 w-4 m-0 flex items-center justify-center uppercase text-white font-bold text-m rounded-full"%>
+                    <%= link_to "-", {:controller => :users, :action => "demote", :id => user[:id]}, method: :post, class: "bg-button_primary h-4 w-4 m-0 flex items-center justify-center uppercase text-white font-bold text-m rounded-full"%>
+                  </div>
+                </div>
+              </td>
+              <%= content_tag :td, user[:folders].split(",").length, class: "border border-black px-4 py-2 font-medium"%>
+              <%= content_tag :td, user[:photos_uploaded], class: "border border-black px-4 py-2 font-medium"%>
+              <%= content_tag :td, user[:videos_uploaded], class: "border border-black px-4 py-2 font-medium"%>
+              <td class="border border-black px-4 py-2 font-medium">
+                <%= link_to_if user[:id] != @user[:id], "Remove User", {:controller => :users, :action => "remove", :id => user[:id]}, method: :post, class: "bg-button_primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"%>
+              </td>
             </tr>
           <% end %>
         </tbody>
       </table>
+      <div class="py-2">
+        <p class="mt-6 mb-3">All Media Folders</p>
+        <div class="grid grid-flow-col auto-cols-max font-bold uppercase">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+          </svg>
+          <% (0..@split_dir.length - 1).each { |count| %>
+            <%= link_to @split_dir[count], user_manage_path(path: @split_dir[0..count].join("/")), class: "text-blue-400 hover:text-blue-500 mx-2"%>
+            <%= if count < @split_dir.length - 1
+                  content_tag :p, ">"
+                end %>
+          <% } %>
+        </div>
+        <hr class="my-2 border-b-1 border-gray-500">
+        <div class="grid grid-flow-row auto-rows-max uppercase font-bold">
+          <% @current_hash[:children].each do |child| %>
+            <div class="grid grid-flow-col auto-cols-max">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
+              <%= link_to child[:path], user_manage_path(path: @current_dir + "/" + child[:path]), class: "text-blue-400 hover:text-blue-500 mx-2"%>
+              <%= check_box_tag "folders[]", @current_dir + "/" + child[:path], false, class: "self-center" -%>
+            </div>
+          <%- end %>
+        </div>
+      </div>
     </div>
+    <% end %>
   </div>
 </div>

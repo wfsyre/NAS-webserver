@@ -10,55 +10,45 @@
     <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
-
-  <body class="bgi-home">
-    <div>
+  <body class="bg-fixed bg-home bg-coover bg-no-repeat bg-center">
+    <div class="mt-3">
       <main>
         <nav class="top-0 absolute z-50 w-full flex-wrap items-center justify-between px-2">
           <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
-            <div class="w-full relative flex justify-between">
-              <p class="text-blue-500 text-lg font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase" >Data Exchange
+            <div class="w-full relative flex justify-between mt-2">
+              <p class="text-white text-lg font-bold leading-relaxed inline-block mr-4 whitespace-nowrap uppercase" >Data Exchange
               </p>
-              <div class="w-1/2 mx-auto mt-4  rounded">
-                <!-- Tabs -->
-<!--                <ul id="tabs" class="inline-flex w-full px-1 pt-2 ">-->
-<!--                  <li class="px-4 py-2 font-semibold text-gray-800 rounded-t opacity-50">-->
-<!--                    <a href="#third">Electronics</a>-->
-<!--                  </li>-->
-<!--                  <li class="px-4 py-2 font-semibold text-gray-800 rounded-t opacity-50 border-b-4">-->
-<!--                    <a href="#fourth">Others</a>-->
-<!--                  </li>-->
-<!--                </ul>-->
-                <!-- Tab Contents -->
-<!--                <div id="tab-contents">-->
-<!--                  <div id="first" class="p-4">-->
-<!--                    First tab-->
-<!--                  </div>-->
-<!--                  <div id="second" class="p-4 hidden">-->
-<!--                    Second tab-->
-<!--                  </div>-->
-<!--                  <div id="third" class="p-4 hidden">-->
-<!--                    Third tab-->
-<!--                  </div>-->
-<!--                  <div id="fourth" class="p-4 hidden">-->
-<!--                    Fourth tab-->
-<!--                  </div>-->
-<!--                </div>-->
-              </div>
               <div>
-                <a class=" uppercase text-white font-bold hover:shadow-lg shadow text-xs px-0 py-0 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150">Folders</a>
-              </div>
-              <div class="">
-                <%= if is_admin?
-                  link_to "Admin Page", user_manage_path, class: "bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-                end%>
                 <%= if @user != nil
-                  link_to @user[:username], @user, class: "uppercase text-white font-bold text-xs px-4 py-2 sm:mr-2 mb-1"
-                end%>
+                      link_to @user[:username], @user, class: "uppercase text-white font-bold hover:shadow-lg shadow text-md px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
+                    end%>
                 <%= if @user != nil
-                  link_to "Log out", "/sessions", method: "delete", class: "bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-                end%>
+                      link_to "Log out", "/sessions", method: "delete", class: "bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
+                    end%>
+                <%= if @user == nil
+                      link_to "Log in", new_session_path, class: "bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
+                    end%>
               </div>
+            </div>
+            <div class="mx-auto rounded mb-5">
+              <ul id="tabs" class="inline-flex w-full px-1 pt-2">
+                <li class="px-4 py-1 font-semibold text-white rounded-t <%= 'border-b-4' if current_page?(new_session_path)%>">
+                  <%= if @user == nil
+                    link_to "Login", new_session_path
+                  end%>
+                </li>
+                <li class="px-4 py-1 font-semibold text-white rounded-t <%= 'border-b-4' if false%>">
+                  <a>Media</a>
+                </li>
+                <li class="px-4 py-1 font-semibold text-white rounded-t <%= 'border-b-4' if current_page?(about_path)%>">
+                  <%= link_to "About", about_path%>
+                </li>
+                <li class="px-4 py-1 font-semibold text-white rounded-t <%= 'border-b-4' if current_page?(user_manage_path)%>">
+                  <%= if is_admin?
+                    link_to "Admin Page", user_manage_path
+                  end%>
+                </li>
+              </ul>
             </div>
           </div>
         </nav>
