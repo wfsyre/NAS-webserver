@@ -2,7 +2,9 @@ Rails.application.routes.draw do
 
   root 'sessions#new'
 
-  resources :users, only: [:new, :create, :show]
+  resources :users, only: [:new, :create, :show] do
+    resources :manage, only: []
+  end
   resources :sessions, only: [:create, :new, :destroy]
   resources :file_transfer, only: [:show]
 
@@ -13,7 +15,8 @@ Rails.application.routes.draw do
   post "/user/remove/:id", to: "users#remove"
   get "/user/manage?:path", to: "users#manage"
   get "/user/manage/:id", to: "users#manage_user"
-  get "/user/manage", to: "users#manage"
+  post "/user/manage/:id/changefolder/:folder", to: "users#change_folder", as: "change_folder"
+  get "/user/manage", to: "users#manage", as: "manage_user"
   post "user/manage", to: "users#change"
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html

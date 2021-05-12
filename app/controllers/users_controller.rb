@@ -85,6 +85,16 @@ class UsersController < ApplicationController
     @permissions = @managed_user[:permissions]
   end
 
+  def change_folder
+    @managed_user = User.find(params[:id])
+    folder = params[:folder]
+    user_folders = @managed_user[:folders].split(",")
+    user_folders.delete folder
+    @managed_user[:folders] = user_folders.join(",")
+    @managed_user.save
+    redirect_to manage_user_path + "/" + params[:id]
+  end
+
   def promote
     promoted_user = User.find(params[:id])
     if promoted_user[:permissions] < 10
