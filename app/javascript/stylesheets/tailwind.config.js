@@ -38,7 +38,8 @@ module.exports = {
       pink: colors.pink,
       primary: colors.green["300"],
       secondary: colors.blue["500"],
-      button_primary: colors.gray["700"],
+      'button-primary': colors.gray["700"],
+      'button-disabled': colors.gray["400"],
     },
     spacing: {
       px: '1px',

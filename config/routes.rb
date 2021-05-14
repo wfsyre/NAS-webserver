@@ -1,12 +1,10 @@
 Rails.application.routes.draw do
 
-  root 'sessions#new'
-
   resources :users, only: [:new, :create, :show] do
     resources :manage, only: []
   end
   resources :sessions, only: [:create, :new, :destroy]
-  resources :file_transfer, only: [:show]
+  resources :file_transfer, only: [:index, :show]
 
   get "/about/", to: "about#show"
   delete "/sessions", to: "sessions#destroy"
@@ -18,6 +16,8 @@ Rails.application.routes.draw do
   post "/user/manage/:id/changefolder/:folder", to: "users#change_folder", as: "change_folder"
   get "/user/manage", to: "users#manage", as: "manage_user"
   post "user/manage", to: "users#change"
+
+  root :to => redirect('sessions/new')
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

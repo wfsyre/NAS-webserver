@@ -1,5 +1,8 @@
 class UsersController < ApplicationController
   skip_before_action :require_login, only: [:create, :new]
+  before_action :require_admin, only: [:manage_user, :manage]
+  before_action :require_file_path_param, only: [:manage]
+
 
   def new
     p "new"
@@ -13,22 +16,21 @@ class UsersController < ApplicationController
     @num_folders = @folders.length
     @num_managed_users = @users.length
     root_dir = "media"
-    @media = directory_hash root_dir
-    if params[:path] == nil or params[:path] == ""
-      @current_dir = root_dir
-    else
-      @current_dir = params[:path]
-    end
+    @root = directory_hash root_dir
+    @current_dir = params[:path]
     @split_dir = @current_dir.split("/")
-    @current_hash = @media
+    @current_hash = @root
     @split_dir[1..].each do |f|
-      @current_hash = @current_hash[:children].find {|p| p[:path] == f}
+      @current_hash = @current_hash[:children].find {|p| p[:path][(p[:path].rindex("/") + 1)..] == f}
     end
   end
 
   def change
     affected_users = params[:users]
     folders_to_add = params[:folders]
+    if affected_users == nil or folders_to_add == nil
+      return
+    end
     affected_users.each do |user|
       current_user = User.find(user.to_i)
       folders_to_add.each do |f|
