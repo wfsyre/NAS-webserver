@@ -3,16 +3,9 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
   helper_method :is_admin?
   helper_method :directory_hash
-  helper_method :require_file_path_param
   helper_method :require_admin
   @folders_current = false
   @manage_current = false
-
-  def require_file_path_param
-    if params[:path] == nil or params[:path] == ""
-      redirect_to manage_user_path(path: "media")
-    end
-  end
 
   def require_login
     redirect_to new_session_path unless session.include? :user_id

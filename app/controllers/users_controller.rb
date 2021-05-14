@@ -3,6 +3,11 @@ class UsersController < ApplicationController
   before_action :require_admin, only: [:manage_user, :manage]
   before_action :require_file_path_param, only: [:manage]
 
+  def require_file_path_param
+    if params[:path] == nil or params[:path] == ""
+      redirect_to manage_user_path(path: "media")
+    end
+  end
 
   def new
     p "new"

@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   get "/user/manage", to: "users#manage", as: "manage_user"
   post "user/manage", to: "users#change"
 
+  match 'download', to: 'file_transfer#download', as: 'download', via: :get
+  put "/file_transfer/upload", to: "file_transfer#upload"
+
   root :to => redirect('sessions/new')
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
