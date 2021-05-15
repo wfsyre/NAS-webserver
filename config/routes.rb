@@ -15,10 +15,12 @@ Rails.application.routes.draw do
   get "/user/manage/:id", to: "users#manage_user"
   post "/user/manage/:id/changefolder/:folder", to: "users#change_folder", as: "change_folder"
   get "/user/manage", to: "users#manage", as: "manage_user"
-  post "user/manage", to: "users#change"
+  post "/user/manage", to: "users#change"
 
   match 'download', to: 'file_transfer#download', as: 'download', via: :get
-  put "/file_transfer/upload", to: "file_transfer#upload"
+  match 'download_all', to: 'file_transfer#download_all', as: 'download_all', via: :get
+
+  post "/file_transfer/upload", to: "file_transfer#upload"
 
   root :to => redirect('sessions/new')
 

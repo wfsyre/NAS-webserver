@@ -41,6 +41,7 @@
       <div class="bg-gray-200 px-3 pb-6 rounded-md pt-0.5 mt-3 grid grid-cols-2">
         <div>
           <p class="mt-6 mb-3">Files in Current Directory</p>
+          <%= link_to "Download All", download_all_path(directory: @current_dir, files:@current_hash[:files]), target: "_blank" %>
           <div class="grid grid-flow-row auto-rows-max uppercase font-bold">
             <% @current_hash[:files].each do |file| %>
               <div class="grid grid-flow-col auto-cols-max px-3">
@@ -57,7 +58,8 @@
         <div>
           <p class="mt-6 mb-3">Upload file to this directory</p>
           <%= form_tag(file_transfer_upload_path, :multipart => true) do %>
-            <%= file_field_tag 'file', :multiple => true%>
+            <%= file_field_tag 'upload_files[]', :multiple => true%>
+            <%= hidden_field_tag(:directory, @current_dir) %>
             <%=submit_tag 'Submit', class: "bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"%>
           <% end %>
         </div>

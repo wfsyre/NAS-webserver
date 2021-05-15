@@ -1,3 +1,4 @@
+require 'zip'
 class FileTransferController < ApplicationController
   before_action :require_file_path_param, only: [:index]
 
@@ -27,11 +28,28 @@ class FileTransferController < ApplicationController
     send_file file, status: 202
   end
 
-  def upload
-    uploaded_io = params[:upload_files]
-    File.open(Rails.root.join(@current_dir, uploaded_io.original_filename), 'w') do |file|
-      file.write(uploaded_io.read)
+  def download_all
+    dir = params[:directory]
+    files = params[:files]
+    zip_file = Tempfile.new("./temp.zip")
+    Zip::File.open(zip_file.path, Zip::File::CREATE) do |zipfile|
+      files.each do |f|
+        zipfile.add(f[:path], File.join(dir, f[:path]))
+      end
     end
+    cleaned_filename = dir.gsub("/", "-")
+    zip_data = File.read(zip_file.path)
+    send_data zip_data, stats:202, :type => 'application/zip', :filename => cleaned_filename + ".zip"
+    zip_file.unlink
+  end
+
+  def upload
+    params[:upload_files].each do |uploaded_io|
+      File.open(Rails.root.join(params[:directory], uploaded_io.original_filename), 'wb') do |file|
+        file.write(uploaded_io.read)
+      end
+    end
+    redirect_to file_transfer_index_path(path: params[:path])
   end
 
   def post_params
