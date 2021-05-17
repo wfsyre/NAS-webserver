@@ -41,8 +41,10 @@
       <div class="bg-gray-200 px-3 pb-6 rounded-md pt-0.5 mt-3 grid grid-cols-2">
         <div>
           <p class="mt-6 mb-3">Files in Current Directory</p>
-          <%= link_to "Download All", download_all_path(directory: @current_dir, files:@current_hash[:files]), target: "_blank" %>
-          <div class="grid grid-flow-row auto-rows-max uppercase font-bold">
+          <%= if @current_hash[:files].length > 1
+            link_to "Download All", download_all_path(directory: @current_dir, files:@current_hash[:files]), target: "_blank", class: "bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
+            end %>
+          <div class="grid grid-flow-row auto-rows-max uppercase font-bold mt-2">
             <% @current_hash[:files].each do |file| %>
               <div class="grid grid-flow-col auto-cols-max px-3">
                 <%= link_to download_path(file: file[:path], directory: @current_dir), target: "_blank" do %>

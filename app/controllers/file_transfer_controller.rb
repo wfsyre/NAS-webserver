@@ -2,12 +2,6 @@ require 'zip'
 class FileTransferController < ApplicationController
   before_action :require_file_path_param, only: [:index]
 
-  def require_file_path_param
-    if params[:path] == nil or params[:path] == ""
-      redirect_to file_transfer_index_path(path: "media")
-    end
-  end
-
   def index
     @user = User.find(session[:user_id])
     @folders = @user[:folders].split(",")
@@ -29,17 +23,22 @@ class FileTransferController < ApplicationController
   end
 
   def download_all
+    @user = User.find(session[:user_id])
     dir = params[:directory]
     files = params[:files]
     zip_file = Tempfile.new("./temp.zip")
-    Zip::File.open(zip_file.path, Zip::File::CREATE) do |zipfile|
-      files.each do |f|
-        zipfile.add(f[:path], File.join(dir, f[:path]))
+    folder_array = @user[:folders].split(",")
+    byebug
+    if files != nil and folder_array != nil and folder_array.any? {|d| d == dir}
+      Zip::File.open(zip_file.path, Zip::File::CREATE) do |zipfile|
+        files.each do |f|
+          zipfile.add(f[:path], File.join(dir, f[:path]))
+        end
       end
+      cleaned_filename = dir.gsub("/", "-")
+      zip_data = File.read(zip_file.path)
+      send_data zip_data, stats:202, :type => 'application/zip', :filename => cleaned_filename + ".zip"
     end
-    cleaned_filename = dir.gsub("/", "-")
-    zip_data = File.read(zip_file.path)
-    send_data zip_data, stats:202, :type => 'application/zip', :filename => cleaned_filename + ".zip"
     zip_file.unlink
   end
 
@@ -52,7 +51,15 @@ class FileTransferController < ApplicationController
     redirect_to file_transfer_index_path(path: params[:path])
   end
 
+  private
+
   def post_params
     params.require(:post).permit(:upload_files => [])
+  end
+
+  def require_file_path_param
+    if params[:path] == nil or params[:path] == ""
+      redirect_to file_transfer_index_path(path: "media")
+    end
   end
 end
