@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_admin
-    redirect_to @user unless session.include? :user_id and User.find(session[:user_id])[:permissions] > 5
+    redirect_to @user unless session.include? :user_id and User.find(session[:user_id])[:permissions] > 3
   end
 
   def current_user
