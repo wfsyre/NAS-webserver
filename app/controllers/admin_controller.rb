@@ -50,15 +50,19 @@ class AdminController < ApplicationController
     end
     affected_users.each do |user|
       current_user = User.find(user.to_i)
-      folders_to_add.each do |f|
-        if current_user[:folders].split(",").count(f) == 0
-          if current_user[:folders].length == 0
-            current_user[:folders] += f
-          else
-            current_user[:folders] += "," + f
+      folders_to_add.each do |full_path|
+        parent_folders = full_path.split "/"
+        (1..parent_folders.length).each { |i|
+          f = parent_folders[0..i].join "/"
+          if current_user[:folders].split(",").count(f) == 0
+            if current_user[:folders].length == 0
+              current_user[:folders] += f
+            else
+              current_user[:folders] += "," + f
+            end
+            current_user.save
           end
-          current_user.save
-        end
+        }
       end
     end
     redirect_to admin_index_path(path: session[:path])

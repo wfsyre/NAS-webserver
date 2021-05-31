@@ -33,13 +33,26 @@ class ApplicationController < ActionController::Base
       full_path = File.join(path, entry)
       if File.directory?(full_path)
         if accepted_files == nil or accepted_files.any? full_path
-          children << directory_hash(full_path, entry)
+          children << directory_hash(full_path, accepted_files)
         end
       else
         files << {:path => entry}
       end
     end
     data
+  end
+
+  def file_list(path, accepted_files = nil, exclude = [])
+    exclude.concat(%w[.. . .git __MACOSX .DS_Store])
+    files = []
+    Dir.foreach(path) do |entry|
+      next if exclude.include?(entry)
+      full_path = File.join(path, entry)
+      unless File.directory?(full_path)
+        files << entry
+      end
+    end
+    files
   end
 
 end
