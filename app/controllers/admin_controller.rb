@@ -75,7 +75,7 @@ class AdminController < ApplicationController
     user_folders.delete folder
     @managed_user[:folders] = user_folders.join(",")
     @managed_user.save
-    redirect_to params[:id]
+    redirect_to admin_show_path(:id => params[:id])
   end
 
   def promote
@@ -99,6 +99,15 @@ class AdminController < ApplicationController
 
   def remove
     User.delete(params[:id])
+    redirect_to admin_index_path(path: session[:path])
+  end
+
+  def add_folder
+    name = params[:name]
+    dir = params[:dir]
+    unless File.exist? File.join(dir, name)
+      Dir.mkdir File.join(dir, name)
+    end
     redirect_to admin_index_path(path: session[:path])
   end
 end

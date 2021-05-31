@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>NAS Webserver</title>
+    <title>Williamandfriends</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -16,7 +16,7 @@
         <nav class="top-0 absolute z-50 w-full flex-wrap items-center justify-between px-2">
           <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
             <div class="w-full relative flex justify-between mt-2">
-              <p class="text-white text-lg font-bold leading-relaxed inline-block mr-4 whitespace-nowrap uppercase" >Data Exchange
+              <p class="text-white text-xs font-bold leading-relaxed inline-block whitespace-nowrap uppercase md:text-lg" >Data Exchange
               </p>
               <div>
                 <%= if @user != nil
@@ -30,7 +30,7 @@
                     end%>
               </div>
             </div>
-            <div class="mx-auto rounded mb-5">
+            <div class="mx-auto rounded mb-6">
               <ul id="tabs" class="inline-flex w-full px-1 pt-2">
                 <li class="px-4 py-1 font-semibold text-white rounded-t <%= 'border-b-4' if current_page?(new_session_path)%>">
                   <%= if @user == nil
@@ -52,7 +52,7 @@
             </div>
           </div>
         </nav>
-        <section class="absolute w-full h-full">
+        <section class="absolute w-full h-full mt-3">
           <div class="container mx-auto px-4 h-full">
             <%= yield %>
           </div>

@@ -2,9 +2,9 @@
   <div class="flex-wrap justify-center place-content-evenly">
     <%= form_with method: :post do |form|%>
     <div class="px-3 py-6 bg-gray-200 rounded-lg mt-4">
-      <div class="grid grid-cols-2 overflow-visible">
-        <p>Managed Users</p>
-        <%=form.submit "Add Folders", class: "bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-2 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"%>
+      <div class="overflow-visible relative flex justify-between">
+        <p class="font-bold leading-relaxed inline-block whitespace-nowrap uppercase">Managed Users</p>
+        <%=form.submit "Add Selected Folders to Selected Users", class: "bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-2 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150 mr-3"%>
       </div>
       <div class="overflow-scroll">
         <table class="table-auto border-collapse">
@@ -58,12 +58,12 @@
       </div>
       <div class="py-2 overflow-y-scroll">
         <p class="mt-6 mb-3">All Media Folders</p>
-        <div class="grid grid-flow-col auto-cols-max font-bold uppercase">
+        <div class="grid grid-flow-col auto-cols-max font-bold">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
           </svg>
           <% (0..@split_dir.length - 1).each { |count| %>
-            <%= link_to @split_dir[count], admin_index_path(path: @split_dir[0..count].join("/")), class: "text-blue-400 hover:text-blue-500 mx-2"%>
+            <%= link_to @split_dir[count], admin_index_path(path: @split_dir[0..count].join("/")), class: "uppercase text-blue-400 hover:text-blue-500 mx-2"%>
             <%= if count < @split_dir.length - 1
                   content_tag :p, ">"
                 end %>
@@ -82,7 +82,12 @@
           <%- end %>
         </div>
       </div>
-    </div>
     <% end %>
+    <%= form_with url: add_folder_path, method: :post, action_name: :add_folder do |add_folder_form| %>
+      <%= add_folder_form.text_field :name, :placeholder => "New folder Name", class: "px-3 text-sm"%>
+      <%= add_folder_form.hidden_field :dir, value: @current_dir%>
+      <%= add_folder_form.submit "Add folder", class: "bg-button-primary uppercase text-white font-bold text-xs px-4 ease-linear transition-all duration-150 justify-center"%>
+    <% end %>
+    </div>
   </div>
 </div>

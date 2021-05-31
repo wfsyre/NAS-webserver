@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   post "/admin/remove/:id", to: "admin#remove"
   post "/admin/change_folder/", to: "admin#change_folder", as: "change_folder"
   post "/admin/index/", to: "admin#change"
+  post "/admin/add_folder/", to: "admin#add_folder", as: "add_folder"
 
   match 'download', to: 'file_transfer#download', as: 'download', via: :get
   match 'download_all', to: 'file_transfer#download_all', as: 'download_all', via: :get
