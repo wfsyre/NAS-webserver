@@ -16,6 +16,7 @@ class AdminController < ApplicationController
     @user = User.find(session[:user_id])
     @managed_user = User.find(params[:id])
     @folders = @managed_user[:folders].split(",")
+    @files = FileRecord.where(:uploader => params[:id]).order("name ASC")
     @num_folders = @folders.length
     @photos_num = @managed_user[:photos_uploaded]
     @vids_num = @managed_user[:videos_uploaded]

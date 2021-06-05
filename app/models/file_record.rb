@@ -1,0 +1,3 @@
+class FileRecord < ApplicationRecord
+
+end

@@ -2,7 +2,6 @@ class UsersController < ApplicationController
   skip_before_action :require_login, only: [:create, :new]
 
   def new
-    p "new"
     @new_user = User.new
   end
 
@@ -17,7 +16,7 @@ class UsersController < ApplicationController
                           admin: false,
                           photos_uploaded: 0,
                           videos_uploaded: 0)
-      if @user.save
+      if not @user.new_record?
         session[:user_id] = @user.id
         redirect_to @user
       else
@@ -37,6 +36,7 @@ class UsersController < ApplicationController
       end
     end
     @folders = @user[:folders].split(",")
+    @files = FileRecord.where(uploader: @user[:id]).order('name ASC')
     @num_folders = @folders.length
     @photos_num = @user[:photos_uploaded]
     @vids_num = @user[:videos_uploaded]

@@ -44,12 +44,26 @@ class FileTransferController < ApplicationController
   end
 
   def upload
+    image_extensions = %w[png jpg gif]
+    @user = User.find(session[:user_id])
     params[:upload_files].each do |uploaded_io|
-      File.open(Rails.root.join(params[:directory], uploaded_io.original_filename), 'wb') do |file|
-        file.write(uploaded_io.read)
+      unless File.file? Rails.root.join(params[:directory], uploaded_io.original_filename)
+        File.open(Rails.root.join(params[:directory], uploaded_io.original_filename), 'wb') do |file|
+          @file_record = FileRecord.create(name: uploaded_io.original_filename.to_s,
+                                          dir: params[:directory].to_s,
+                                          uploader: session[:user_id])
+          file.write(uploaded_io.read)
+          extension = uploaded_io.original_filename.split(".")[-1]
+          if image_extensions.none? {|ext| ext.casecmp(extension) == 0}
+            @user.videos_uploaded += 1
+          else
+            @user.photos_uploaded += 1
+          end
+        end
       end
     end
-    redirect_to file_transfer_index_path(path: params[:path])
+    @user.save
+    redirect_to file_transfer_index_path(path: params[:directory])
   end
 
   private

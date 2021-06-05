@@ -12,11 +12,15 @@ class ApplicationController < ActionController::Base
   end
 
   def is_admin?
-    (not @user == nil) && @user[:permissions] > 3
+    (not @user == nil) && @user.permissions > 3
   end
 
   def require_admin
-    redirect_to @user unless session.include? :user_id and User.find(session[:user_id])[:permissions] > 3
+    @user = User.find(session[:user_id])
+    if @user == nil
+      redirect_to new_session_path
+    end
+    redirect_to @user unless session.include? :user_id and @user.permissions > 3
   end
 
   def current_user
