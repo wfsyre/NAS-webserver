@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
       redirect_to @user
     else
       message = "Username and password combination not recognized"
-      redirect_to sessions_path, notice: message
+      redirect_to new_session_path, notice: message
     end
   end
 
