@@ -14,6 +14,38 @@ class FileTransferController < ApplicationController
     @split_dir[1..].each do |f|
       @current_hash = @current_hash[:children].find {|p| p[:path][(p[:path].rindex("/") + 1)..] == f}
     end
+    records = FileRecord.where(:dir => @current_dir)
+    @current_hash[:files].each do |file|
+      rec = records.find {|f| f.name == file[:path]}
+      if rec != nil
+        file[:uploader] = User.find(rec.uploader).username
+      else
+        me = User.find_by_username("wfsyre")
+        FileRecord.create(name: file[:path],
+                          dir: params[:path],
+                          uploader: me.id)
+        file[:uploader] = me.username
+        extension = file[:path].split(".")[-1]
+        image_extensions = %w[png jpg gif]
+        if image_extensions.none? {|ext| ext.casecmp(extension) == 0}
+          me.videos_uploaded += 1
+        else
+          me.photos_uploaded += 1
+        end
+        me.save
+      end
+    end
+    @current_hash[:children].each do |child|
+      contributors = Hash.new 0
+      FileRecord.where(:dir => @current_dir).map { |c| contributors[c.uploader] += 1}
+      if contributors.size == 1
+        child[:uploader] = User.find(contributors.keys[0]).username
+        child[:num_uploaders] = 1
+      else
+        child[:uploader] = "Multiple Contributors"
+        child[:num_uploaders] = contributors.size
+      end
+    end
   end
 
   def download
@@ -49,7 +81,7 @@ class FileTransferController < ApplicationController
     params[:upload_files].each do |uploaded_io|
       unless File.file? Rails.root.join(params[:directory], uploaded_io.original_filename)
         File.open(Rails.root.join(params[:directory], uploaded_io.original_filename), 'wb') do |file|
-          @file_record = FileRecord.create(name: uploaded_io.original_filename.to_s,
+          FileRecord.create(name: uploaded_io.original_filename.to_s,
                                           dir: params[:directory].to_s,
                                           uploader: session[:user_id])
           file.write(uploaded_io.read)

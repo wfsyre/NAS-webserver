@@ -13,7 +13,7 @@ class UsersController < ApplicationController
       @user = User.create(username: user_params[:username],
                           password: user_params[:password],
                           folders: "",
-                          admin: false,
+                          permissions: 0,
                           photos_uploaded: 0,
                           videos_uploaded: 0)
       if not @user.new_record?
@@ -36,7 +36,7 @@ class UsersController < ApplicationController
       end
     end
     @folders = @user[:folders].split(",")
-    @files = FileRecord.where(uploader: @user[:id]).order('name ASC')
+    @files = FileRecord.where(uploader: @user[:id]).order('created_at ASC')
     @num_folders = @folders.length
     @photos_num = @user[:photos_uploaded]
     @vids_num = @user[:videos_uploaded]

@@ -84,7 +84,6 @@ class AdminController < ApplicationController
     if promoted_user[:permissions] < 10
       promoted_user[:permissions] += 1
       promoted_user.save
-      byebug
       redirect_to admin_index_path(path: session[:path])
     end
   end

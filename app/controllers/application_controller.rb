@@ -32,6 +32,7 @@ class ApplicationController < ActionController::Base
     data = {:path => (name || path)}
     data[:files] = files = []
     data[:children] = children = []
+    total_size = 0
     Dir.foreach(path) do |entry|
       next if exclude.include?(entry)
       full_path = File.join(path, entry)
@@ -40,9 +41,12 @@ class ApplicationController < ActionController::Base
           children << directory_hash(full_path, accepted_files)
         end
       else
-        files << {:path => entry}
+        total_size += File.size(full_path)
+        files << {:path => entry, :size => File.size(full_path)}
       end
     end
+    data[:size] = total_size
+    children.each { |child|  total_size += child[:size]}
     data
   end
 

@@ -11,60 +11,102 @@
         </div>
       </div>
     </div>
-      <div class="px-3 pb-6 bg-gray-200 rounded-lg mt-4">
-        <div class="py-2">
-          <p class="mt-6 mb-3">Directory View</p>
+    <div class="bg-gray-200 px-3 pb-6 rounded-md pt-0.5 mt-3 relative h-screen">
+      <div class="h-full">
+        <div class="mt-6 mb-3">
           <div class="grid grid-flow-col auto-cols-max font-bold uppercase">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
             </svg>
             <% (0..@split_dir.length - 1).each { |count| %>
-              <%= link_to @split_dir[count], file_transfer_index_path(path: @split_dir[0..count].join("/")), class: "text-blue-400 hover:text-blue-500 mx-2"%>
+              <%= link_to @split_dir[count], file_transfer_index_path(path: @split_dir[0..count].join("/")), class: "text-blue-400 text-xl hover:text-blue-500 mx-2"%>
               <%= if count < @split_dir.length - 1
                     content_tag :p, ">"
                   end %>
             <% } %>
           </div>
-          <hr class="my-2 border-b-1 border-gray-500">
-          <div class="grid grid-flow-row auto-rows-max uppercase font-bold">
-            <% @current_hash[:children].each do |child| %>
-              <div class="grid grid-flow-col auto-cols-max">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                </svg>
-                <%= link_to child[:path][child[:path].rindex("/") + 1..], file_transfer_index_path(path: child[:path]), class: "text-blue-400 hover:text-blue-500 mx-2"%>
-              </div>
-            <%- end %>
+          <div class="w-full mt-5 space-x-4 justify-between flex">
+            <div>
+              <%= if @current_hash[:files].length > 1
+                link_to "Download All", download_all_path(directory: @current_dir), target: "_blank", class: "inline-flex bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
+              else
+                content_tag :button, "No Files to Download", :disabled =>true, class: "bg-button-disabled bg-button-primary uppercase text-white font-bold shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
+              end %>
+            </div>
+            <div>
+              <%= form_tag(file_transfer_upload_path, :multipart => true) do %>
+              <%= file_field_tag 'upload_files[]', :multiple => true%>
+              <%= hidden_field_tag(:directory, @current_dir) %>
+              <%=submit_tag 'Submit Selected Files', class: "inline bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"%>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <hr class="my-2 border-b-1 border-gray-500">
+        <div class="relative h-5/6">
+          <div class="absolute w-full h-full overflow-y-scroll overflow-hidden">
+            <table class="w-full table-auto">
+    <!--          <div class="grid grid-flow-row auto-rows-max uppercase font-bold px-3">-->
+              <thead>
+              <tr>
+                <th class="px-4 py-2 w-10">Select</th>
+                <th class="px-4 py-2 flex justify-left">Name</th>
+                <th class="px-4 py-2 w-10">Size</th>
+                <th class="px-4 py-2 w-1/6">Contributor(s)</th>
+              </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-400">
+                <tr></tr>
+                <% @current_hash[:children].each do |child| %>
+                  <tr>
+                    <td class="">
+                      <p class="flex text-2xl justify-center">-</p>
+                    </td>
+                    <td class="px-4 py-2 justify-self-center">
+                      <div class="flex">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                        </svg>
+                        <%= link_to child[:path][child[:path].rindex("/") + 1..], file_transfer_index_path(path: child[:path]), class: "text-blue-400 hover:text-blue-500 mx-2"%>
+                      </div>
+                    </td>
+                    <td>
+                      <%= content_tag :p, number_to_human_size(child[:size]), class: "flex justify-center" %>
+                    </td>
+                    <td>
+                      <%= content_tag :p, child[:uploader], class: "flex justify-center" %>
+                    </td>
+                  </tr>
+                <%- end %>
+                <% @current_hash[:files].each do |file| %>
+                  <tr>
+                    <td class="px-8 font-medium">
+                      <%= check_box_tag "files[]", file[:path], false, class: "self-center" -%>
+                    </td>
+                    <td>
+                      <div class="grid grid-flow-col auto-cols-max px-3">
+                        <%#= link_to download_path(file: file[:path], directory: @current_dir), target: "_blank" do %>
+    <!--                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
+    <!--                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />-->
+    <!--                    </svg>-->
+                        <%# end %>
+                        <%= content_tag :p, file[:path], class: "text-black mx-2"%>
+                      </div>
+                    </td>
+                    <td>
+                      <%= content_tag :p, number_to_human_size(file[:size]), class: "flex justify-center" %>
+                    </td>
+                    <td>
+                      <%= content_tag :p, file[:uploader], class: "flex justify-center" %>
+                    </td>
+                  </tr>
+                <%- end %>
+                <tr></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-      <div class="bg-gray-200 px-3 pb-6 rounded-md pt-0.5 mt-3 grid grid-cols-2 gap-5">
-        <div>
-          <p class="mt-6 mb-3">Files in Current Directory</p>
-          <%= if @current_hash[:files].length > 1
-            link_to "Download All", download_all_path(directory: @current_dir), target: "_blank", class: "bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
-            end %>
-          <div class="grid grid-flow-row auto-rows-max uppercase font-bold mt-2 h-screen overflow-y-scroll">
-            <% @current_hash[:files].each do |file| %>
-              <div class="grid grid-flow-col auto-cols-max px-3">
-                <%= link_to download_path(file: file[:path], directory: @current_dir), target: "_blank" do %>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                </svg>
-                <% end %>
-                <%= content_tag :p, file[:path], class: "text-black mx-2"%>
-              </div>
-            <%- end %>
-          </div>
-        </div>
-        <div>
-          <p class="mt-6 mb-3">Upload file to this directory</p>
-          <%= form_tag(file_transfer_upload_path, :multipart => true) do %>
-            <%= file_field_tag 'upload_files[]', :multiple => true%>
-            <%= hidden_field_tag(:directory, @current_dir) %>
-            <%=submit_tag 'Submit Selected Files', class: "bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"%>
-          <% end %>
-        </div>
     </div>
   </div>
 </div>
