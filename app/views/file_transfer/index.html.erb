@@ -1,5 +1,5 @@
-<div class="justify-center h-full mt-20">
-  <div class="flex-wrap justify-center place-content-evenly">
+<div class="justify-center max-h-full mt-20">
+  <div class="justify-center place-content-evenly">
     <div class="w-full px-4 lg:order-1 bg-gray-200 rounded-md object-top">
       <div class="flex justify-center py-4 lg:pt-4 pt-8 top-0">
         <div class="mr-4 p-3 text-center">
@@ -11,8 +11,8 @@
         </div>
       </div>
     </div>
-    <div class="bg-gray-200 px-3 pb-6 rounded-md pt-0.5 mt-3 relative h-screen">
-      <div class="h-full">
+    <div class="bg-gray-200 px-3 pb-6 rounded-md pt-0.5 mt-3 relative">
+      <div class="">
         <div class="mt-6 mb-3">
           <div class="grid grid-flow-col auto-cols-max font-bold uppercase">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -28,10 +28,11 @@
           <div class="w-full mt-5 space-x-4 justify-between flex">
             <div>
               <%= if @current_hash[:files].length > 1
-                link_to "Download All", download_all_path(directory: @current_dir), target: "_blank", class: "inline-flex bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
+                link_to "Download All", download_all_path(directory: @current_dir), target: "_blank", class: "bg-button-primary inline-flex uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
               else
                 content_tag :button, "No Files to Download", :disabled =>true, class: "bg-button-disabled bg-button-primary uppercase text-white font-bold shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
               end %>
+<!--              <button type="button" id="check_all" class="btw"><%#="Check all/Uncheck all"%></button>-->
             </div>
             <div>
               <%= form_tag(file_transfer_upload_path, :multipart => true) do %>
@@ -42,23 +43,20 @@
             </div>
           </div>
         </div>
-        <hr class="my-2 border-b-1 border-gray-500">
-        <div class="relative h-5/6">
-          <div class="absolute w-full h-full overflow-y-scroll overflow-hidden">
-            <table class="w-full table-auto">
-    <!--          <div class="grid grid-flow-row auto-rows-max uppercase font-bold px-3">-->
-              <thead>
-              <tr>
-                <th class="px-4 py-2 w-10">Select</th>
-                <th class="px-4 py-2 flex justify-left">Name</th>
-                <th class="px-4 py-2 w-10">Size</th>
-                <th class="px-4 py-2 w-1/6">Contributor(s)</th>
-              </tr>
+        <div class="h-5/6">
+          <div class="w-full h-144 overflow-y-scroll overscroll-contain overflow-hidden">
+            <table class="w-full">
+              <thead class="bg-green-500 text-white w-auto sticky top-0">
+                <tr>
+                  <th class="px-4 py-2 w-10">Select</th>
+                  <th class="px-4 py-2 flex justify-left">Name</th>
+                  <th class="px-4 py-2 w-10">Size</th>
+                  <th class="px-4 py-2 w-1/6">Contributor(s)</th>
+                </tr>
               </thead>
               <tbody class="divide-y divide-gray-400">
-                <tr></tr>
                 <% @current_hash[:children].each do |child| %>
-                  <tr>
+                  <tr class="even:bg-gray-200">
                     <td class="">
                       <p class="flex text-2xl justify-center">-</p>
                     </td>
@@ -79,19 +77,12 @@
                   </tr>
                 <%- end %>
                 <% @current_hash[:files].each do |file| %>
-                  <tr>
+                  <tr class="even:bg-gray-300">
                     <td class="px-8 font-medium">
-                      <%= check_box_tag "files[]", file[:path], false, class: "self-center" -%>
+                      <%= check_box_tag "files[]", file[:path], false, class: "self-center checkbox" -%>
                     </td>
-                    <td>
-                      <div class="grid grid-flow-col auto-cols-max px-3">
-                        <%#= link_to download_path(file: file[:path], directory: @current_dir), target: "_blank" do %>
-    <!--                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
-    <!--                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />-->
-    <!--                    </svg>-->
-                        <%# end %>
-                        <%= content_tag :p, file[:path], class: "text-black mx-2"%>
-                      </div>
+                    <td class="flex justify-left">
+                      <%= link_to file[:path], download_path(file: file[:path], directory: @current_dir), target: "_blank", class: "text-blue-600 hover:text-blue-800 visited:text-purple-600"%>
                     </td>
                     <td>
                       <%= content_tag :p, number_to_human_size(file[:size]), class: "flex justify-center" %>
@@ -110,3 +101,25 @@
     </div>
   </div>
 </div>
+
+<!--<script type='text/javascript'>-->
+<!--    $(document).ready(function(){-->
+<!--        $('#check_all').on("click", function() {-->
+// grouping all the checkbox using the classname
+<!--            let checkboxes = $("file_select_checkbox");-->
+// check whether checkboxes are selected.
+<!--            if(checkboxes.prop("checked")){-->
+// if they are selected, unchecking all the checkbox
+<!--                checkboxes.prop("checked",false);-->
+<!--            } else {-->
+// if they are not selected, checking all the checkbox
+<!--                checkboxes.prop("checked",true);-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+<!--<style>-->
+<!--    .btn {-->
+<!--        @apply inline-flex uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150;-->
+<!--    }-->
+<!--</style>-->

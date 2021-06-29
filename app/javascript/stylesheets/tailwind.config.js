@@ -15,7 +15,7 @@ module.exports = {
       md: '768px',
       lg: '1024px',
       xl: '1280px',
-      '2xl': '1536px',
+      '2xl' : '1536px',
     },
     extend: {
       backgroundImage: (theme) => ({
@@ -77,6 +77,9 @@ module.exports = {
       72: '18rem',
       80: '20rem',
       96: '24rem',
+      112: '28rem',
+      128: '32rem',
+      144: '36rem',
     },
     animation: {
       none: 'none',
@@ -972,6 +975,10 @@ module.exports = {
     width: ['responsive'],
     wordBreak: ['responsive'],
     zIndex: ['responsive', 'focus-within', 'focus'],
+    extend: {
+      textColor: ['visited'],
+      backgroundColor: ['even', 'odd']
+    }
   },
   plugins: [],
 }
