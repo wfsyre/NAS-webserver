@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   post "/admin/add_folder/", to: "admin#add_folder", as: "add_folder"
 
   match 'download', to: 'file_transfer#download', as: 'download', via: :get
+  match 'download_selected', to: 'file_transfer#download_selected', as: 'download_selected', via: :get
   match 'download_all', to: 'file_transfer#download_all', as: 'download_all', via: :get
 
   post "/file_transfer/upload", to: "file_transfer#upload"

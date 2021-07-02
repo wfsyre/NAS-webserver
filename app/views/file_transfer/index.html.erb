@@ -27,18 +27,21 @@
           </div>
           <div class="w-full mt-5 space-x-4 justify-between flex">
             <div>
-              <%= if @current_hash[:files].length > 1
-                link_to "Download All", download_all_path(directory: @current_dir), target: "_blank", class: "bg-button-primary inline-flex uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
+              <%# if @current_hash[:files].length > 1
+                link_to "Download Selected", download_all_path(directory: @current_dir), target: "_blank", class: "bg-button-primary inline-flex uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
               else
                 content_tag :button, "No Files to Download", :disabled =>true, class: "bg-button-disabled bg-button-primary uppercase text-white font-bold shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"
               end %>
-<!--              <button type="button" id="check_all" class="btw"><%#="Check all/Uncheck all"%></button>-->
+              <a onclick="downloadSelected()" class="cursor-pointer bg-button-primary inline-flex uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150">Download Selected</a>
+              <a onclick="selectAll()" class="cursor-pointer bg-button-primary inline-flex uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150">Select/Unselect All</a>
             </div>
             <div>
+              <% if @current_dir != "media" %>
               <%= form_tag(file_transfer_upload_path, :multipart => true) do %>
               <%= file_field_tag 'upload_files[]', :multiple => true%>
               <%= hidden_field_tag(:directory, @current_dir) %>
               <%=submit_tag 'Submit Selected Files', class: "inline bg-button-primary uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150"%>
+              <% end %>
               <% end %>
             </div>
           </div>
@@ -79,7 +82,7 @@
                 <% @current_hash[:files].each do |file| %>
                   <tr class="even:bg-gray-300">
                     <td class="px-8 font-medium">
-                      <%= check_box_tag "files[]", file[:path], false, class: "self-center checkbox" -%>
+                      <%= check_box_tag "files[]", file[:id], false, class: "self-center checkbox" -%>
                     </td>
                     <td class="flex justify-left">
                       <%= link_to file[:path], download_path(file: file[:path], directory: @current_dir), target: "_blank", class: "text-blue-600 hover:text-blue-800 visited:text-purple-600"%>
@@ -102,24 +105,29 @@
   </div>
 </div>
 
-<!--<script type='text/javascript'>-->
-<!--    $(document).ready(function(){-->
-<!--        $('#check_all').on("click", function() {-->
-// grouping all the checkbox using the classname
-<!--            let checkboxes = $("file_select_checkbox");-->
-// check whether checkboxes are selected.
-<!--            if(checkboxes.prop("checked")){-->
-// if they are selected, unchecking all the checkbox
-<!--                checkboxes.prop("checked",false);-->
-<!--            } else {-->
-// if they are not selected, checking all the checkbox
-<!--                checkboxes.prop("checked",true);-->
-<!--            }-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
-<!--<style>-->
-<!--    .btn {-->
-<!--        @apply inline-flex uppercase text-white font-bold hover:shadow-lg shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 my-3 ease-linear transition-all duration-150;-->
-<!--    }-->
-<!--</style>-->
+<script type="text/javascript">
+    window.selectAll = function() {
+        let all_checked = true;
+        let checkboxes = document.querySelectorAll("input.checkbox");
+        checkboxes.forEach((item) => {
+            if (!item.checked) {
+                all_checked = false;
+            }
+        });
+        checkboxes.forEach((item) => {
+            item.checked = !all_checked;
+        });
+    }
+    window.downloadSelected = function() {
+        let checkboxes = document.querySelectorAll("input.checkbox");
+        let checked_file_ids = [];
+        checkboxes.forEach((item) => {
+            if (item.checked) {
+                checked_file_ids.push(item.value);
+            }
+        });
+        window.location = "/download_selected?" + new URLSearchParams({'file_ids': checked_file_ids}).toString();
+    }
+</script>
+
+<!--<script src="../../../lib/libraries/dropzone-5.7.0/dist/dropzone.js"></script>-->

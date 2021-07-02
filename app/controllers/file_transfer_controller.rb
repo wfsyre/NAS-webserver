@@ -19,6 +19,7 @@ class FileTransferController < ApplicationController
       rec = records.find {|f| f.name == file[:path]}
       if rec != nil
         file[:uploader] = User.find(rec.uploader).username
+        file[:id] = rec.id
       else
         me = User.find_by_username("wfsyre")
         FileRecord.create(name: file[:path],
@@ -58,7 +59,7 @@ class FileTransferController < ApplicationController
     @user = User.find(session[:user_id])
     dir = params[:directory]
     zip_file = Tempfile.new("./temp.zip")
-    folder_array = @user[:folders].split(",")
+    folder_array = @user.folders.split(",")
     files = file_list dir
     if folder_array != nil and folder_array.any? {|d| d == dir}
       Zip::File.open(zip_file.path, Zip::File::CREATE) do |zipfile|
@@ -71,6 +72,39 @@ class FileTransferController < ApplicationController
       cleaned_filename = dir[first_slash..].gsub("/", "-")
       zip_data = File.read(zip_file.path)
       send_data zip_data, stats:202, :type => 'application/zip', :filename => cleaned_filename + ".zip"
+    end
+    zip_file.unlink
+  end
+
+  def download_selected
+    @user = User.find(session[:user_id])
+    file_ids = params[:file_ids].split(",")
+    folder_array = @user.folders.split(",")
+    zip_file = Tempfile.new("./temp.zip")
+    files = []
+    dir = nil
+    file_ids.each do |f|
+      rec = FileRecord.find(Integer(f))
+      dir = rec.dir
+      files.append({name: rec.name, dir: rec.dir})
+    end
+    if folder_array != nil and dir != nil and folder_array.any? {|d| d == dir}
+      Zip::File.open(zip_file.path, Zip::File::CREATE) do |zipfile|
+        files.each do |f|
+          p f[:name]
+          zipfile.add(f[:name], File.join(f[:dir], f[:name]))
+        end
+        p "here1"
+      end
+      p "here2"
+      first_slash = dir.index("/") + 1
+      first_slash = 0 if first_slash == nil
+      cleaned_filename = dir[first_slash..].gsub("/", "-")
+      p cleaned_filename
+      zip_data = File.read(zip_file.path)
+      p "here3"
+      send_data zip_data, stats:202, :type => 'application/zip', :filename => cleaned_filename + ".zip"
+      p "here4"
     end
     zip_file.unlink
   end
